@@ -1,0 +1,11 @@
+{
+  "state": "ready",
+  "total_chunks": 16,
+  "files": [
+    "portfolio-new_dce.pdf"
+  ],
+  "embed_model": "all-MiniLM-L6-v2",
+  "chunk_size": 500,
+  "chunk_overlap": 50,
+  "built_at": "2026-06-03T15:10:54.943701"
+}

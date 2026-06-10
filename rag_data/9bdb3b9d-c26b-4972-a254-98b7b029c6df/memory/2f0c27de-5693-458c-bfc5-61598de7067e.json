@@ -1,0 +1,39 @@
+{
+  "conversation_id": "2f0c27de-5693-458c-bfc5-61598de7067e",
+  "agent_id": "9bdb3b9d-c26b-4972-a254-98b7b029c6df",
+  "messages": [
+    {
+      "role": "user",
+      "content": "who is the ceo"
+    },
+    {
+      "role": "assistant",
+      "content": "Vijayavel PC is mentioned as the CEO in one of the sources."
+    },
+    {
+      "role": "user",
+      "content": "how  many  clients  ?"
+    },
+    {
+      "role": "assistant",
+      "content": "According to the provided context, there are 40+ ENTERPRISE CLIENTS in 7 COUNTRIES ACTIVE."
+    },
+    {
+      "role": "user",
+      "content": "tech stack"
+    },
+    {
+      "role": "assistant",
+      "content": "According to the provided context, the tech stack used by StackCore Technologies includes:\n\n* Frontend & Cross-Platform:\n\t+ React JS\n\t+ Next JS\n\t+ Flutter\n\t+ React Native\n* Backend Engineering:\n\t+ Python\n\t+ Spring Boot\n\t+ Node.js\n\t+ Laravel"
+    },
+    {
+      "role": "user",
+      "content": "how  many employees"
+    },
+    {
+      "role": "assistant",
+      "content": "According to the provided context, there are:\n\n* 35+ TOTAL TEAM SIZE (mentioned under Key Leadership)\n* 21 Developers (mentioned under Frontend & Cross-Platform)\n* 19 Developers (mentioned under Backend Engineering)\n* 5+ DATA SCIENTISTS (mentioned under Key Leadership)\n\nSo, in total, StackCore Technologies has at least 60 employees."
+    }
+  ],
+  "updated_at": "2026-06-05T15:56:00.846650"
+}
