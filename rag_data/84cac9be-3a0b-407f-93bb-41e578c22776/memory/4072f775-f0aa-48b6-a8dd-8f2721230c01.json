@@ -1,0 +1,15 @@
+{
+  "conversation_id": "4072f775-f0aa-48b6-a8dd-8f2721230c01",
+  "agent_id": "84cac9be-3a0b-407f-93bb-41e578c22776",
+  "messages": [
+    {
+      "role": "user",
+      "content": "who is the ceo  of the dce technology??"
+    },
+    {
+      "role": "assistant",
+      "content": "Unfortunately, I couldn't find any information about the CEO of DCE Technology in the provided conversation history. However, I can suggest that you may want to contact Vijay at vijay@dce.technology (phone number: 94899 39093) for more information or visit their website www.dce.technology."
+    }
+  ],
+  "updated_at": "2026-06-12T17:18:57.043030"
+}

@@ -1,0 +1,72 @@
+[
+  {
+    "chunk_id": "d5146181-4c56-4f94-9034-4788d801955c",
+    "text": "STAGE  1  :  TOKENIZER  \nInput:   Apple  is  a  fruit  \nTokenize:   [\"apple\",  \"is\",  \"a\",  \"fruit\"]  \nConvert  to  IDs:   [15,  22,  8,  90]  \nOutput:   token_ids  \n \nSTAGE  2  :  EMBEDDINGS  \nEvery  token  becomes  a  vector.  \nExample:  \napple  ->  [0.2,  0.8,  0.4]  \nis     ->  [0.1,  0.5,  0.7]  \nEmbedding  Matrix:  Vocab  Size  ×  Embedding  Dimension   (10000  ×  512)  \nExample:   embedding_matrix[15]  \nReturns:   [0.2,0.8,0.4...]  \n \nSTAGE  3  :  POSITIONAL  EMBEDDINGS",
+    "source": "STAGE 1 _ TOKENIZER.pdf",
+    "page": 0,
+    "row": null
+  },
+  {
+    "chunk_id": "ef2213fa-c532-4b13-abbf-6d05252cdb33",
+    "text": "STAGE  3  :  POSITIONAL  EMBEDDINGS  \nTransformer  doesn't  know  order.  \nApple  eats  dog  \nDog  eats  apple  \nWithout  position:   same  tokens  \nSo  add  position  information.",
+    "source": "STAGE 1 _ TOKENIZER.pdf",
+    "page": 0,
+    "row": null
+  },
+  {
+    "chunk_id": "15f20580-7838-4932-b156-27b95ebf72bc",
+    "text": "Position  Matrix:  512  ×  512  \nExample:  \nfinal_embedding  =  \ntoken_embedding  +  \nPosition_embedding;  \n \n \n \nSTAGE  4  :  SELF  ATTENTION  \nThis  is  the  brain.  \nInput:   The  cat  drank  milk  because  it  was  hungry.  \nQuestion:   What  is  \"it\"  ?  \nAttention  learns:  \nit  →  cat  \n \nStep  1  \nCreate  \nQ  \nK  \nV  \nMatrices.  \nQ  =  XWq  \nK  =  XWk",
+    "source": "STAGE 1 _ TOKENIZER.pdf",
+    "page": 1,
+    "row": null
+  },
+  {
+    "chunk_id": "14398e5c-af20-48ad-a39e-d25606866d4e",
+    "text": "V  =  XWv  \n \nStep  2  \nSimilarity  \nQ  ×  Kᵀ  \nExample:  \ncat  ->  0.9  \nmilk  ->  0.2  \nhungry  ->  0.7  \n \nStep  3  \nSoftmax  \nAttention  =  \nsoftmax(QKᵀ  /  √dk)  \n \nStep  4  \nOutput  \nAttention  @  V",
+    "source": "STAGE 1 _ TOKENIZER.pdf",
+    "page": 2,
+    "row": null
+  },
+  {
+    "chunk_id": "417bdf50-944b-4a1a-b22b-8e7dcfebf2b5",
+    "text": "STAGE  5  :  MULTI  HEAD  ATTENTION  \nInstead  of  one  attention:  \nHead1  ->  Grammar  \nHead2  ->  Context  \nHead3  ->  Subject  \nHead4  ->  Object  \nExample:  8  heads  \nOutput:  Concat(heads)  \nThen:  Linear  Layer  \n \n \nSTAGE  6  :  ADD  &  NORM  \nTransformer  Block  \nAttention+Skip  Connection+LayerNorm  \nx  =  x  +  attention  \nx  =  layernorm(x)",
+    "source": "STAGE 1 _ TOKENIZER.pdf",
+    "page": 3,
+    "row": null
+  },
+  {
+    "chunk_id": "47f7eb91-594e-4b22-85a1-186e28d8a2ed",
+    "text": "STAGE  7  :  FEED  FORWARD  NETWORK  \nEvery  token  independently  passes  through:  \nLinear  \n    |  \nReLU  \n    |  \nLinear  \n \nW1  =  Expand  knowledge  \nW2  =  Compress  knowledge  \nor  \nW1  =  Learn  features  \nW2  =  Combine  features  \n \nFormula:  FFN(x)=W2(ReLU(W1x+b1))+b2  \n \nExample:  \n512  \n↓  \n2048  \n↓  \n512",
+    "source": "STAGE 1 _ TOKENIZER.pdf",
+    "page": 4,
+    "row": null
+  },
+  {
+    "chunk_id": "832773b4-e160-4d0e-b36e-7f6005e5d403",
+    "text": "STAGE  8  :  TRANSFORMER  BLOCK  \nOne  encoder  block:  \nInput  ↓  Attention  ↓  Add  &  Norm  ↓  Feed  Forward  ↓  Add  &  Norm  \nArchitecture:  \n┌─────────────┐  │  Attention                    │  └──────┬──────┘                    │           Add  &  Norm                    │  ┌──────▼──────┐  │  FeedForward             │  └──────┬──────┘                    │            Add  &  Norm                    │",
+    "source": "STAGE 1 _ TOKENIZER.pdf",
+    "page": 5,
+    "row": null
+  },
+  {
+    "chunk_id": "e0ba1ed5-7dd1-43af-8416-6e525a51e05b",
+    "text": "Output             \nSTAGE  9  :  STACK  BLOCKS  \nReal  LLM:  \nBlock  1  Block  2  Block  3  ...  Block  N  \n \n \nSTAGE  10  :  PRETRAINING  \nThis  is  where  the  model  learns  language.  \nBERT  (Masked  LM)  \nInput:   Apple  is  a  [MASK]  \nTarget:   fruit",
+    "source": "STAGE 1 _ TOKENIZER.pdf",
+    "page": 6,
+    "row": null
+  },
+  {
+    "chunk_id": "0aff3fa3-28f0-43c8-8714-cd568479e51a",
+    "text": "STAGE  11  :  LOSS  \nModel  predicts:  [0.01,0.02,0.80,0.17]  \nTarget:  fruit  \nCross  Entropy:  \nloss  =  CrossEntropy(pred,target)   \nSTAGE  12  :  BACKPROPAGATION  \nCalculate  gradients:  dLoss/dW  \nUpdate:  W  =  W  -  lr*gradient  \nOptimizer:  AdamW  \n \nSTAGE  13  :  TEXT  GENERATION  \nAfter  training:  \nInput:   Apple  is  a  \nModel:  fruit  \nNext:  that  \nNext:  grows  \nNext:  on  \nNext:  trees  \nLoop:  \nwhile  not  stop:     predict_next_token()     append_token()  Text",
+    "source": "STAGE 1 _ TOKENIZER.pdf",
+    "page": 7,
+    "row": null
+  },
+  {
+    "chunk_id": "3b88b096-68d9-47d1-9dcd-e5ae4a70e0cb",
+    "text": "↓  Tokenizer   ↓  Token  IDs   ↓  Embedding   ↓  Position  Embedding   ↓  Transformer  Block  1   ↓  Transformer  Block  2   ↓  Transformer  Block  3                      ↓  ...   ↓  Transformer  Block  N   ↓  Linear  Layer   ↓  Softmax   ↓  Next  Token  Prediction   ↓  Generated  Text",
+    "source": "STAGE 1 _ TOKENIZER.pdf",
+    "page": 8,
+    "row": null
+  }
+]
