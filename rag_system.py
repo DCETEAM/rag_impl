@@ -14,8 +14,11 @@ import time
 import uuid
 import asyncio
 import logging
+from faster_whisper import WhisperModel
 import httpx
 import shutil
+import base64
+import io
 from pathlib import Path
 from typing import List, Optional, Dict
 from datetime import datetime
@@ -40,6 +43,7 @@ from langchain_community.document_loaders import (
     UnstructuredWordDocumentLoader,
 )
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from transformers import Pipeline
 
 # ─────────────────────────────────────────────
 #  Add project root to path so model/ and tokenizer.py are importable
@@ -95,6 +99,23 @@ AGENTS_EXCEL     = BASE_DIR / "agents.xlsx"
 SUPPORTED_EXTENSIONS = {".csv", ".pdf", ".txt", ".md", ".html", ".htm", ".docx"}
 
 # ─────────────────────────────────────────────
+#  Voice Assistant Configuration (Whisper STT + Kokoro TTS)
+# ─────────────────────────────────────────────
+WHISPER_ENABLED      = os.getenv("WHISPER_ENABLED", "true").lower() in {"1", "true", "yes", "on"}
+WHISPER_MODEL_SIZE   = os.getenv("WHISPER_MODEL_SIZE", "large-v3")
+WHISPER_DEVICE       = os.getenv("WHISPER_DEVICE", "cpu")
+WHISPER_COMPUTE_TYPE = os.getenv("WHISPER_COMPUTE_TYPE", "int8")
+WHISPER_LANGUAGE     = os.getenv("WHISPER_LANGUAGE") or None  # None = auto-detect
+
+KOKORO_ENABLED       = os.getenv("KOKORO_ENABLED", "true").lower() in {"1", "true", "yes", "on"}
+KOKORO_LANG_CODE     = os.getenv("KOKORO_LANG_CODE", "a")     # 'a' = American English
+KOKORO_VOICE         = os.getenv("KOKORO_VOICE", "af_heart")
+KOKORO_SAMPLE_RATE   = int(os.getenv("KOKORO_SAMPLE_RATE", 24000))
+
+VOICE_TEMP_DIR       = BASE_DIR / "_voice_tmp"
+SUPPORTED_AUDIO_EXTENSIONS = {".wav", ".mp3", ".m4a", ".webm", ".ogg", ".flac"}
+
+# ─────────────────────────────────────────────
 #  Logging
 # ─────────────────────────────────────────────
 logging.basicConfig(
@@ -112,6 +133,10 @@ tokenizer: Optional[MyTokenizer]      = None
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 agent_cache: Dict[str, tuple] = {}
+
+# Voice assistant model instances (loaded at startup if enabled/available)
+whisper_model = None
+kokoro_pipeline = None
 
 # ─────────────────────────────────────────────
 #  Embedding helper
@@ -416,6 +441,44 @@ async def startup():
     embed_model.eval()
 
     log.info("EmbeddingModel loaded on %s ✓", device)
+
+    # ── Voice Assistant: Whisper (STT) + Kokoro (TTS) ──
+    VOICE_TEMP_DIR.mkdir(parents=True, exist_ok=True)
+
+    if WHISPER_ENABLED:
+        if WhisperModel is None:
+            log.warning(
+                "faster-whisper is not installed — voice transcription disabled. "
+                "Install with: pip install faster-whisper"
+            )
+        else:
+            try:
+                log.info(
+                    "Loading Whisper model: %s (device=%s, compute_type=%s)",
+                    WHISPER_MODEL_SIZE, WHISPER_DEVICE, WHISPER_COMPUTE_TYPE
+                )
+                whisper_model = WhisperModel(
+                    WHISPER_MODEL_SIZE,
+                    device=WHISPER_DEVICE,
+                    compute_type=WHISPER_COMPUTE_TYPE,
+                )
+                log.info("Whisper model loaded ✓")
+            except Exception as e:
+                log.error(f"Failed to load Whisper model: {e}")
+
+    if KOKORO_ENABLED:
+        if Pipeline is None:
+            log.warning(
+                "kokoro is not installed — voice synthesis disabled. "
+                "Install with: pip install kokoro soundfile"
+            )
+        else:
+            try:
+                log.info("Loading Kokoro TTS pipeline (lang_code=%s)", KOKORO_LANG_CODE)
+                kokoro_pipeline = Pipeline(lang_code=KOKORO_LANG_CODE)
+                log.info("Kokoro TTS pipeline loaded ✓")
+            except Exception as e:
+                log.error(f"Failed to load Kokoro pipeline: {e}")
 
 # ─────────────────────────────────────────────
 #  Agent management endpoints

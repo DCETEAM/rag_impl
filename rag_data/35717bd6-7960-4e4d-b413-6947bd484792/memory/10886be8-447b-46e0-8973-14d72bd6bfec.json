@@ -1,0 +1,15 @@
+{
+  "conversation_id": "10886be8-447b-46e0-8973-14d72bd6bfec",
+  "agent_id": "35717bd6-7960-4e4d-b413-6947bd484792",
+  "messages": [
+    {
+      "role": "user",
+      "content": "say hi"
+    },
+    {
+      "role": "assistant",
+      "content": "Hello! How can I assist you today?"
+    }
+  ],
+  "updated_at": "2026-08-12T13:16:27.038448"
+}
